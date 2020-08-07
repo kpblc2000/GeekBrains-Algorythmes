@@ -20,9 +20,9 @@
 /// </summary>
 /// <param name="Value">Обрабатываемое значение</param>
 /// <returns></returns>
-int ValueExp10(int Value)
+long ValueExp10(long Value)
 {
-	int res = 1;
+	long res = 1;
 	while (Value)
 	{
 		Value /= 10;
@@ -31,7 +31,7 @@ int ValueExp10(int Value)
 	return res;
 }
 
-int IsAutomorph(int Value)
+long IsAutomorph(long Value)
 {
 	return (Value * Value % ValueExp10(Value)) == Value;
 }
@@ -40,20 +40,31 @@ int main()
 {
 	char* locale = setlocale(LC_ALL, "");
 
-	int N;
+	long int N;
 	printf("Введите число для проверки и вывода автоморфных чисел : ");
-	scanf("%d", &N);
+	scanf("%ld", &N);
 
-	int decimals = 0;
+	// По свойства автоморфных чисел все они оканчиваются на 5 или 6. 0 и 1 по некоторым источникам не считаются автоморфными числами 
+	// Для ускорения общего алгоритма выводим 0 и 1 отдельно
 
-	// По свойства автоморфных чисел все они оканчиваются на 5 или 6. 0 и 1 не являются автоморфными числами 
-	for (int d = 0; d <= N / 10; d++)
+	if (N > 0)
 	{
-		for (int i = 5; i <= 6; i++)
+		printf("\n0 0");
+		if (N > 1)
 		{
-			int temp = d * 10 + i;
-			if (IsAutomorph(temp))
-				printf("\n%d %d", temp, temp * temp);
+			printf("\n1 1");
+
+			for (long d = 0; d <= N / 10; d++)
+			{
+				printf("\n%ld", d);
+
+				for (long i = 5; i <= 6; i++)
+				{
+					long temp = d * 10 + i;
+					if (IsAutomorph(temp))
+						printf("\n%ld %ld", temp, temp * temp);
+				}
+			}
 		}
 	}
 
