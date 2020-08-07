@@ -16,32 +16,24 @@
 */
 
 /// <summary>
-/// Вычисляет количество символов целого числа
+/// Определяет степень числа. Например, для 1024 результат будет 1000
 /// </summary>
-/// <param name="Digit">Обрабатываемое число</param>
+/// <param name="Value">Обрабатываемое значение</param>
 /// <returns></returns>
-int DigitLen(int Digit)
+int ValueExp10(int Value)
 {
-	int res = 0;
-	Digit = abs(Digit);
-	while (Digit)
+	int res = 1;
+	while (Value)
 	{
-		res++;
-		Digit /= 10;
+		Value /= 10;
+		res *= 10;
 	}
 	return res;
 }
 
-/// <summary>
-/// Проверяет, является ли число автоморфрным, т.е. равным последним числам своего квадрата
-/// </summary>
-/// <param name="Value">Проверяемое число</param>
-/// <returns>1, если число автоморфное. Иначе 0</returns>
-int IsAntropomorph(int Value)
+int IsAutomorph(int Value)
 {
-	int len = DigitLen(Value);
-	int sq = Value * Value % (int)pow(10, len);
-	return (Value == sq ? 1 : 0);
+	return (Value * Value % ValueExp10(Value)) == Value;
 }
 
 int main()
@@ -52,11 +44,16 @@ int main()
 	printf("Введите число для проверки и вывода автоморфных чисел : ");
 	scanf("%d", &N);
 
-	for (int i = 0; i <= N; i++)
+	int decimals = 0;
+
+	// По свойства автоморфных чисел все они оканчиваются на 5 или 6. 0 и 1 не являются автоморфными числами 
+	for (int d = 0; d <= N / 10; d++)
 	{
-		if (IsAntropomorph(i))
+		for (int i = 5; i <= 6; i++)
 		{
-			printf("\n%d %d", i, i * i);
+			int temp = d * 10 + i;
+			if (IsAutomorph(temp))
+				printf("\n%d %d", temp, temp * temp);
 		}
 	}
 
