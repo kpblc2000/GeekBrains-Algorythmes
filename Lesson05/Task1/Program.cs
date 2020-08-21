@@ -15,15 +15,8 @@ namespace Task1
 	class CharStack
 	{
 		// private int _size; // Количество элементо в стеке
-		private const int _defSize = 20; // Размер стека по умолчанию
 		private char[] _array; // Собственно содержимое стека. Сделаю только под символы
 		private int _pos; // Текущее количество элементов в стеке
-
-		public CharStack()
-		{
-			_array = new char[_defSize];
-			_pos = -1;
-		}
 
 		public CharStack(int Size)
 		{
@@ -42,6 +35,10 @@ namespace Task1
 			_array[_pos] = Symbol;
 		}
 
+		/// <summary>
+		/// Получить символ из стека, удалив его
+		/// </summary>
+		/// <returns></returns>
 		public char Pop()
 		{
 			if (_pos >= 0)
@@ -76,7 +73,7 @@ namespace Task1
 
 			CharStack st;
 
-			foreach (string checkString in new string[] { "(1+2*16)/[(16-400)/{2*3}]", "(1+2*16)/[16-400]/{2*3]" }			)
+			foreach (string checkString in new string[] { "(1+2*16)/[(16-400)/{2***3}]", "(1+2*16)/[16-400]/{2*3]" })
 			{
 				st = new CharStack(checkString.Length - 1);
 
