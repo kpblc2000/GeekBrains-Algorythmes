@@ -12,7 +12,7 @@ namespace Task01
 	{
 		static void Main()
 		{
-			Console.WriteLine("\nВведите строку для обработки : ");
+			Console.Write("\nВведите строку для обработки : ");
 			string userString = Console.ReadLine();
 			int res = 0;
 			for (int i = 0; i < userString.Length; i++)
