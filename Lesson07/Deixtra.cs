@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 /// <summary>
 /// Алексей Кулик kpblc2000@yandex.ru
@@ -65,19 +66,29 @@ namespace Lesson07
 		/// <summary>
 		/// Поиск кратчайшего пути по названиям вершин
 		/// </summary>
-		/// <param name="startName">Название стартовой вершины</param>
-		/// <param name="finishName">Название финишной вершины</param>
+		/// <param name="StartName">Название стартовой вершины</param>
+		/// <param name="FinishName">Название финишной вершины</param>
 		/// <returns>Кратчайший путь</returns>
-		public string FindShortestPath(string startName, string finishName)
+		public string FindShortestPath(string StartName, string FinishName)
 		{
-			return FindShortestPath(graph.FindVertex(startName), graph.FindVertex(finishName));
+			Vertex startVertex = graph.FindVertex(StartName);
+			if (startVertex != null)
+			{
+				Vertex endVertex = graph.FindVertex(FinishName);
+				if (endVertex != null)
+					return FindShortestPath(startVertex, endVertex);
+				else
+					return null;
+			}
+			else
+				return null;
 		}
 
 		/// <summary>
 		/// Поиск кратчайшего пути по вершинам
 		/// </summary>
-		/// <param name="startVertex">Стартовая вершина</param>
-		/// <param name="finishVertex">Финишная вершина</param>
+		/// <param name="startVertex">Стартовая вершина. Должна существовать в графе.</param>
+		/// <param name="finishVertex">Финишная вершина. Должна существовать в графе.</param>
 		/// <returns>Кратчайший путь</returns>
 		public string FindShortestPath(Vertex startVertex, Vertex finishVertex)
 		{
@@ -131,7 +142,7 @@ namespace Lesson07
 			while (startVertex != endVertex)
 			{
 				endVertex = GetVertexInfo(endVertex).PreviousVertex;
-				path = endVertex.ToString() + path;
+				path = endVertex.ToString() + "; " + path;
 			}
 			return path;
 		}
