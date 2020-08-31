@@ -11,11 +11,21 @@ using System.Threading.Tasks;
 namespace Lesson08
 {
 
+	/// <summary>
+	/// Класс для хранения данных о времени выполнения.
+	/// Сделано весьма топорно - только для просмотра результатов.
+	/// </summary>
 	class ReportDatas
 	{
+
 		public int ArrayLength;
 		public double SecondsToRunQuickSort;
 		public double SecondsToRunCountSort;
+
+		public override string ToString()
+		{
+			return String.Format("{0,10}{1,20:F3}{2,20:F3}", ArrayLength, SecondsToRunQuickSort, SecondsToRunCountSort);
+		}
 	}
 
 	class Program
@@ -149,28 +159,32 @@ namespace Lesson08
 
 		static void Main(string[] args)
 		{
-
-			//Dictionary<int, double> dictExecTime = new Dictionary<int, double>();
-			//dictExecTime.Add(100, 0);
-			//dictExecTime.Add(1000, 0);
-			//dictExecTime.Add(10000, 0);
-
 			List<ReportDatas> lst = new List<ReportDatas>();
 
-			foreach (int key in new int[] { 100, 10000, 1000000, 10000000 })
+			foreach (int key in new int[] { 100, 1000, 10000, 1000000 })
 			{
 				// Оставил для целей тестирования
-				// int[] baseArray = ReadArrayFromFile($"Array{key}.txt");
-				int[] baseArray = new int[key];
-				Random rnd = new Random();
-				for (int i = 0; i < key; i++)
+				int[] baseArray;
+				string fileName = $"Array{key}.txt";
+				if (File.Exists(fileName))
 				{
-					baseArray[i] = rnd.Next(1, key);
+					baseArray = ReadArrayFromFile($"Array{key}.txt");
+				}
+				else
+				{
+					baseArray = new int[key];
+					Random rnd = new Random();
+					for (int i = 0; i < key; i++)
+					{
+						baseArray[i] = rnd.Next(1, key);
+					}
 				}
 				int[] arr1 = baseArray.Clone() as int[];
 				int[] arr2 = baseArray.Clone() as int[];
-				ReportDatas rep = new ReportDatas();
-				rep.ArrayLength = baseArray.Length;
+				ReportDatas rep = new ReportDatas
+				{
+					ArrayLength = baseArray.Length
+				};
 				DateTime startTime = DateTime.Now;
 				SortByCount(arr1);
 				rep.SecondsToRunCountSort = (DateTime.Now - startTime).TotalMilliseconds;
@@ -182,7 +196,7 @@ namespace Lesson08
 				int errorPos;
 				if (!ArraysAreEqual(arr1, arr2, out errorPos))
 				{
-					Console.WriteLine($"Ошибка на позиции {errorPos}");
+					Console.WriteLine($"Ошибка на позиции {errorPos} для {key} элементов");
 					Console.ReadKey();
 					rep.SecondsToRunCountSort = -1;
 					rep.SecondsToRunQuickSort = -1;
@@ -190,32 +204,11 @@ namespace Lesson08
 				lst.Add(rep);
 			}
 
-			Console.WriteLine("Элементов\tQuickSort\tCountSort");
+			Console.WriteLine("{0,10}{1,20}{2,20}", "Элементов", "Quick, ms", "Count, ms");
 			foreach (var item in lst)
-			{
-				Console.WriteLine($"{item.ArrayLength}\t{item.SecondsToRunQuickSort:F4}\t{item.SecondsToRunCountSort:F4}");
-			}
+				Console.WriteLine(item);
 
-			//int[] BaseArray = ReadArrayFromFile("Array100.txt");
-
-			//int[] clone1 = BaseArray.Clone() as int[];
-			//int[] clone2 = BaseArray.Clone() as int[];
-
-			//int erPos;
-
-
-			//SortByCount(clone1);
-			//QuickSort(clone2, 0, clone2.Length - 1);
-
-
-			//if (!ArraysAreEqual(clone1, clone2, out erPos))
-			//{
-			//	Console.WriteLine($"Ошибка на позиции {erPos}");
-			//	Console.ReadKey();
-			//}
-
-
-			Console.WriteLine("Нажмите любую клавишу");
+			Console.WriteLine("\nНажмите любую клавишу");
 			Console.ReadKey();
 		}
 	}
