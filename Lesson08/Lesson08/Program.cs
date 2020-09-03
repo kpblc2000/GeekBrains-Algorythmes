@@ -18,188 +18,280 @@ using System.Threading.Tasks;
 namespace Lesson08
 {
 
-	class Program
-	{
+    class Program
+    {
 
-		/// <summary>
-		/// Чтение массива из текстового файла. В файле массив располагается в одну строку. Числа разделены символами ' ' или ',' (или и тем, и другим)
-		/// </summary>
-		/// <param name="FileName">Имя файла, из которого выполняется чтение массива</param>
-		/// <returns></returns>
-		static int[] ReadArrayFromFile(string FileName)
-		{
-			string[] arStr;
-			using (StreamReader sr = new StreamReader(FileName))
-			{
-				arStr = sr.ReadLine().Split(new char[] { ',' });
-			}
-			int[] res = new int[arStr.Length];
-			int idx = 0;
-			foreach (string val in arStr)
-			{
-				int x;
-				int.TryParse(val, out x);
-				res[idx] = x;
-				idx++;
-			}
-			return res;
-		}
+        /// <summary>
+        /// Чтение массива из текстового файла. В файле массив располагается в одну строку. Числа разделены символами ' ' или ',' (или и тем, и другим)
+        /// </summary>
+        /// <param name="FileName">Имя файла, из которого выполняется чтение массива</param>
+        /// <returns></returns>
+        static int[] ReadArrayFromFile(string FileName)
+        {
+            string[] arStr;
+            using (StreamReader sr = new StreamReader(FileName))
+            {
+                arStr = sr.ReadLine().Split(new char[] { ',' });
+            }
+            int[] res = new int[arStr.Length];
+            int idx = 0;
+            foreach (string val in arStr)
+            {
+                int x;
+                int.TryParse(val, out x);
+                res[idx] = x;
+                idx++;
+            }
+            return res;
+        }
 
-		/// <summary>
-		/// Сортировка подсчетом. Реализовать без определения максимального / минимального числа не удалось
-		/// </summary>
-		/// <param name="ArrayForSorting">Обрабатываемый массив</param>
-		static void SortByCount(int[] ArrayForSorting)
-		{
-			int minVal = ArrayForSorting[0];
-			int maxVal = ArrayForSorting[0];
-			foreach (int item in ArrayForSorting)
-			{
-				if (item > maxVal)
-					maxVal = item;
-				else if (item < minVal)
-					minVal = item;
-			}
+        /// <summary>
+        /// Сортировка подсчетом. Реализовать без определения максимального / минимального числа не удалось
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        static void SortByCount(int[] ArrayForSorting)
+        {
+            int minVal = ArrayForSorting[0];
+            int maxVal = ArrayForSorting[0];
+            foreach (int item in ArrayForSorting)
+            {
+                if (item > maxVal)
+                    maxVal = item;
+                else if (item < minVal)
+                    minVal = item;
+            }
 
-			// Создаем новый массив, в котором будем хранить количество вхождений каждого из элементов начального массива.
-			int[] countArray = new int[maxVal + 1];
-			for (int i = 0; i < ArrayForSorting.Length; i++)
-			{
-				// Например, для первого вхождения значения 5: countArray[5] = 1;
-				// Для второго - уже 2
-				// И т.д.
-				countArray[ArrayForSorting[i]]++;
-			}
+            // Создаем новый массив, в котором будем хранить количество вхождений каждого из элементов начального массива.
+            int[] countArray = new int[maxVal + 1];
+            for (int i = 0; i < ArrayForSorting.Length; i++)
+            {
+                // Например, для первого вхождения значения 5: countArray[5] = 1;
+                // Для второго - уже 2
+                // И т.д.
+                countArray[ArrayForSorting[i]]++;
+            }
 
-			// Проходим по всем элементам массива подсчета вхождений
-			int index = 0;
-			for (int i = 0; i < countArray.Length; i++)
-			{
-				// Игнорим все нулевые вхождения
-				for (int j = 0; j < countArray[i]; j++)
-				{
-					// Учитывая, что index - это индекс элемента в базовом массиве,
-					// а i - что-то ненулевое, и являющееся тем самым числом, можно выполнять присваивание
-					ArrayForSorting[index] = i;
-					index++;
-				}
-			}
-		}
+            // Проходим по всем элементам массива подсчета вхождений
+            int index = 0;
+            for (int i = 0; i < countArray.Length; i++)
+            {
+                // Игнорим все нулевые вхождения
+                for (int j = 0; j < countArray[i]; j++)
+                {
+                    // Учитывая, что index - это индекс элемента в базовом массиве,
+                    // а i - что-то ненулевое, и являющееся тем самым числом, можно выполнять присваивание
+                    ArrayForSorting[index] = i;
+                    index++;
+                }
+            }
+        }
 
-		/// <summary>
-		/// Попытка реализации быстрой сортировки
-		/// </summary>
-		/// <param name="ArrayForSorting">Обрабатываемый массив</param>
-		/// <param name="StartIdex">Начальный индекс сортируемого куска</param>
-		/// <param name="LastIndex">Конечный индекс сортируемого куска</param>
-		static void QuickSort(int[] ArrayForSorting, int StartIdex, int LastIndex)
-		{
-			// Если диапазон состоит всего из одного элемента, действия можно не выполнять
-			// Сортировка по среднему элементу
-			int mid = ArrayForSorting[(StartIdex + LastIndex) / 2];
-			int start = StartIdex;
-			int last = LastIndex;
-			while (start <= last)
-			{
-				// Увеличиваем начальную позицию, пока либо не найдем бОльший элемент, чем средний, либо пока начальный и конечный индекс не будут равны
-				while (ArrayForSorting[start] < mid && start <= LastIndex) ++start;
-				// Уменьшаем конечную позицию, пока либо не найдем меньший элемент, чем средний, либо пока начальная и конечная позиция не будут равны
-				while (ArrayForSorting[last] > mid && last >= StartIdex) --last;
-				// Если начальная позиция все еще не больше конечной
-				if (start <= last)
-				{
-					// выполняем перемену значений местами и сдвигаем позиции дальше
-					(ArrayForSorting[start], ArrayForSorting[last]) = (ArrayForSorting[last], ArrayForSorting[start]);
-					++start;
-					--last;
-				}
-			}
-			// Если последняя позиция все еще больше начального индекса, сортируем от начального индекса и до этой позиции
-			if (last > StartIdex) QuickSort(ArrayForSorting, StartIdex, last);
-			// Если начальная позиция все еще меньше конечного индекса, сортируем от начальной позиции и до конечного индекса
-			if (start < LastIndex) QuickSort(ArrayForSorting, start, LastIndex);
+        #region Быстрая сортировка
+        /// <summary>
+        /// Попытка реализации быстрой сортировки
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        /// <param name="StartIdex">Начальный индекс сортируемого куска</param>
+        /// <param name="LastIndex">Конечный индекс сортируемого куска</param>
+        static void QuickSort(int[] ArrayForSorting, int StartIdex, int LastIndex)
+        {
+            // Если диапазон состоит всего из одного элемента, действия можно не выполнять
+            // Сортировка по среднему элементу
+            int mid = ArrayForSorting[(StartIdex + LastIndex) / 2];
+            int start = StartIdex;
+            int last = LastIndex;
+            while (start <= last)
+            {
+                // Увеличиваем начальную позицию, пока либо не найдем бОльший элемент, чем средний, либо пока начальный и конечный индекс не будут равны
+                while (ArrayForSorting[start] < mid && start <= LastIndex) ++start;
+                // Уменьшаем конечную позицию, пока либо не найдем меньший элемент, чем средний, либо пока начальная и конечная позиция не будут равны
+                while (ArrayForSorting[last] > mid && last >= StartIdex) --last;
+                // Если начальная позиция все еще не больше конечной
+                if (start <= last)
+                {
+                    // выполняем перемену значений местами и сдвигаем позиции дальше
+                    (ArrayForSorting[start], ArrayForSorting[last]) = (ArrayForSorting[last], ArrayForSorting[start]);
+                    ++start;
+                    --last;
+                }
+            }
+            // Если последняя позиция все еще больше начального индекса, сортируем от начального индекса и до этой позиции
+            if (last > StartIdex) QuickSort(ArrayForSorting, StartIdex, last);
+            // Если начальная позиция все еще меньше конечного индекса, сортируем от начальной позиции и до конечного индекса
+            if (start < LastIndex) QuickSort(ArrayForSorting, start, LastIndex);
 
-		}
+        }
 
-		/// <summary>
-		/// Сервисная функция поэлементного сравнения целочисленных массивов.
-		/// </summary>
-		/// <param name="Array1">Сравниваемый массив</param>
-		/// <param name="Array2">Сравниваемый массив</param>
-		/// <param name="ErrorPosition">Первая позиция, на которой элементы оказываются не равными</param>
-		/// <returns></returns>
-		static bool ArraysAreEqual(int[] Array1, int[] Array2, out int ErrorPosition)
-		{
-			ErrorPosition = -1;
-			bool res = Array1.Length == Array2.Length;
-			if (res)
-			{
-				for (int i = 0; i < Array1.Length; i++)
-				{
-					if (Array1[i] != Array2[i])
-					{
-						res = false;
-						ErrorPosition = i;
-						break;
-					}
-				}
-			}
-			return res;
-		}
+        /// <summary>
+        /// Попытка реализации быстрой сортировки
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        static void QuickSort(int[] ArrayForSorting)
+        {
+            QuickSort(ArrayForSorting, 0, ArrayForSorting.Length - 1);
+        }
+        #endregion
 
-		static void Main(string[] args)
-		{
-			List<ReportDatas> lst = new List<ReportDatas>();
+        #region Сортировка слиянием
 
-			foreach (int key in new int[] { 100, 1000, 10000, 1000000})
-			{
-				// Оставил для целей тестирования
-				int[] baseArray;
-				string fileName = $"Array{key}.txt";
-				if (File.Exists(fileName))
-				{
-					baseArray = ReadArrayFromFile($"Array{key}.txt");
-				}
-				else
-				{
-					baseArray = new int[key];
-					Random rnd = new Random();
-					for (int i = 0; i < key; i++)
-					{
-						baseArray[i] = rnd.Next(1, key);
-					}
-				}
-				int[] arr1 = baseArray.Clone() as int[];
-				int[] arr2 = baseArray.Clone() as int[];
-				ReportDatas rep = new ReportDatas
-				{
-					ArrayLength = baseArray.Length
-				};
-				DateTime startTime = DateTime.Now;
-				SortByCount(arr1);
-				rep.SecondsToRunCountSort = (DateTime.Now - startTime).TotalMilliseconds;
+        /// <summary>
+        /// Слияние
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        /// <param name="LowIndex">Нижний индекс сортируемой части <paramref name="ArrayForSorting"/></param>
+        /// <param name="MiddleIndex">Средний индекс сортируемой части <paramref name="ArrayForSorting"/></param>
+        /// <param name="UpIndex">Верхний индекс сортируемой части <paramref name="ArrayForSorting"/></param>
+        static void Merge(int[] ArrayForSorting, int LowIndex, int MiddleIndex, int UpIndex)
+        {
+            int left = LowIndex;
+            int right = MiddleIndex + 1;
+            int[] tmpArray = new int[UpIndex - LowIndex + 1];
+            int index = 0;
 
-				startTime = DateTime.Now;
-				QuickSort(arr2, 0, arr2.Length - 1);
-				rep.SecondsToRunQuickSort = (DateTime.Now - startTime).TotalMilliseconds;
+            while ((left <= MiddleIndex) && (right <= UpIndex))
+            {
+                if (ArrayForSorting[left] < ArrayForSorting[right])
+                {
+                    tmpArray[index] = ArrayForSorting[left];
+                    left++;
+                }
+                else
+                {
+                    tmpArray[index] = ArrayForSorting[right];
+                    right++;
+                }
+                index++;
+            }
 
-				int errorPos;
-				if (!ArraysAreEqual(arr1, arr2, out errorPos))
-				{
-					Console.WriteLine($"Ошибка на позиции {errorPos} для {key} элементов");
-					Console.ReadKey();
-					rep.SecondsToRunCountSort = -1;
-					rep.SecondsToRunQuickSort = -1;
-				}
-				lst.Add(rep);
-			}
+            for (int i = left; i <= MiddleIndex; i++)
+            {
+                tmpArray[index] = ArrayForSorting[i];
+                index++;
+            }
 
-			Console.WriteLine("{0,10}{1,20}{2,20}", "Элементов", "Quick, ms", "Count, ms");
-			foreach (var item in lst)
-				Console.WriteLine(item);
+            for (int i = right; i <= UpIndex; i++)
+            {
+                tmpArray[index] = ArrayForSorting[i];
+                index++;
+            }
 
-			Console.WriteLine("\nНажмите любую клавишу");
-			Console.ReadKey();
-		}
-	}
+            for (int i = 0; i < tmpArray.Length; i++)
+            {
+                ArrayForSorting[LowIndex + i] = tmpArray[i];
+            }
+        }
+
+        /// <summary>
+        /// Сортировка слиянием
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        /// <param name="LowIndex">Нижний индекс разделения</param>
+        /// <param name="UpIndex">Верхний индекс разделения</param>
+        static void MergeSort(int[] ArrayForSorting, int LowIndex, int UpIndex)
+        {
+            if (LowIndex < UpIndex)
+            {
+                int middleIndex = (LowIndex + UpIndex) / 2;
+                MergeSort(ArrayForSorting, LowIndex, middleIndex);
+                MergeSort(ArrayForSorting, middleIndex + 1, UpIndex);
+                Merge(ArrayForSorting, LowIndex, middleIndex, UpIndex);
+            }
+        }
+
+        /// <summary>
+        /// Сортировка слиянием
+        /// </summary>
+        /// <param name="ArrayForSorting">Обрабатываемый массив</param>
+        static void MergeSort(int[] ArrayForSorting)
+        {
+            MergeSort(ArrayForSorting, 0, ArrayForSorting.Length - 1);
+        }
+        #endregion
+
+        /// <summary>
+        /// Сервисная функция поэлементного сравнения целочисленных массивов.
+        /// </summary>
+        /// <param name="Array1">Сравниваемый массив</param>
+        /// <param name="Array2">Сравниваемый массив</param>
+        /// <param name="ErrorPosition">Первая позиция, на которой элементы оказываются не равными</param>
+        /// <returns></returns>
+        static bool ArraysAreEqual(int[] Array1, int[] Array2, out int ErrorPosition)
+        {
+            ErrorPosition = -1;
+            bool res = Array1.Length == Array2.Length;
+            if (res)
+            {
+                for (int i = 0; i < Array1.Length; i++)
+                {
+                    if (Array1[i] != Array2[i])
+                    {
+                        res = false;
+                        ErrorPosition = i;
+                        break;
+                    }
+                }
+            }
+            return res;
+        }
+
+        static void Main(string[] args)
+        {
+            List<ReportDatas> lst = new List<ReportDatas>();
+
+            foreach (int key in new int[] { 100, 1000, 10000, 1000000 })
+            {
+                // Оставил для целей тестирования
+                int[] baseArray;
+                string fileName = $"Array{key}.txt";
+                if (File.Exists(fileName))
+                {
+                    baseArray = ReadArrayFromFile($"Array{key}.txt");
+                }
+                else
+                {
+                    baseArray = new int[key];
+                    Random rnd = new Random();
+                    for (int i = 0; i < key; i++)
+                    {
+                        baseArray[i] = rnd.Next(1, key);
+                    }
+                }
+                int[] arr1 = baseArray.Clone() as int[];
+                int[] arr2 = baseArray.Clone() as int[];
+                int[] arr3 = baseArray.Clone() as int[];
+                ReportDatas rep = new ReportDatas
+                {
+                    ArrayLength = baseArray.Length
+                };
+                DateTime startTime = DateTime.Now;
+                SortByCount(arr1);
+                rep.SecondsToRunCountSort = (DateTime.Now - startTime).TotalMilliseconds;
+
+                startTime = DateTime.Now;
+                QuickSort(arr2);
+                rep.SecondsToRunQuickSort = (DateTime.Now - startTime).TotalMilliseconds;
+
+                startTime = DateTime.Now;
+                MergeSort(arr3);
+                rep.SecondsToRunMergeSort = (DateTime.Now - startTime).TotalMilliseconds;
+
+                int errorPos;
+                if (!ArraysAreEqual(arr1, arr2, out errorPos) || !ArraysAreEqual(arr1, arr3, out errorPos) || !ArraysAreEqual(arr2, arr3, out errorPos))
+                {
+                    Console.WriteLine($"Ошибка на позиции {errorPos} для {key} элементов");
+                    Console.ReadKey();
+                    rep.SecondsToRunCountSort = -1;
+                    rep.SecondsToRunQuickSort = -1;
+                }
+                lst.Add(rep);
+            }
+
+            Console.WriteLine("{0,10}{1,20}{2,20}{3,20}", "Элементов", "Quick, ms", "Count, ms", "Merge.ms");
+            foreach (var item in lst)
+                Console.WriteLine(item);
+
+            Console.WriteLine("\nНажмите любую клавишу");
+            Console.ReadKey();
+        }
+    }
 }

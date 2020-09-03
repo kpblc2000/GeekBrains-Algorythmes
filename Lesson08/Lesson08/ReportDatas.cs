@@ -9,20 +9,21 @@
 
 namespace Lesson08
 {
-	/// <summary>
-	/// Класс для хранения данных о времени выполнения.
-	/// Сделано весьма топорно - только для просмотра результатов.
-	/// </summary>
-	class ReportDatas
-	{
+    /// <summary>
+    /// Класс для хранения данных о времени выполнения.
+    /// Сделано весьма топорно - только для просмотра результатов.
+    /// </summary>
+    class ReportDatas
+    {
 
-		public int ArrayLength;
-		public double SecondsToRunQuickSort;
-		public double SecondsToRunCountSort;
+        public int ArrayLength;
+        public double SecondsToRunQuickSort;
+        public double SecondsToRunCountSort;
+        public double SecondsToRunMergeSort;
 
-		public override string ToString()
-		{
-			return String.Format("{0:0 000,10}{1,20:F3}{2,20:F3}", ArrayLength, SecondsToRunQuickSort, SecondsToRunCountSort);
-		}
-	}
+        public override string ToString()
+        {
+            return String.Format("{0,10:# ###} >> {1,20:F3}{2,20:F3}{3,20:F3}", ArrayLength, SecondsToRunQuickSort, SecondsToRunCountSort, SecondsToRunMergeSort);
+        }
+    }
 }
